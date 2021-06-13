@@ -9,6 +9,14 @@ To run the application you need to have `Docker` and `docker-compose` installed.
 docker-compose up
 ```
 
+#### Swagger  
+
+```/docs```  
+
+#### OpenAPI docs
+
+```/redoc```  
+
 So, run the first migration:
 
 ```bash
@@ -61,37 +69,19 @@ source ./venv/bin/activate
 
 ## wnioski
 
-* proste ;)
-
-* zapierdala
-
-* OAuth ogarniety
-
 * pydantic sztos (poczytac doki co sie zmienilo)
 
 ## todosy
 
 * obczaic compose
 
-* zalozyc repo
-
 * dodac gitlab yml
-
-* gitignore
-
-* env 4 vscode dev
 
 * cleanup -> zostaje tylko auth -> update user model -> basic expandable perrmission model -> poczytac alembic o migracjach bo nie pamietam
 
-* exception handling
-
 * fix tests
 
-* http files
-
 * readme
-
-* swagger ? jak dodac z auth
 
 * repository pod orm proste
 
