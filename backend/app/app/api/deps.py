@@ -32,7 +32,7 @@ class AuthBearer(OAuth2PasswordBearer):
 oauth2_scheme = AuthBearer(tokenUrl="token")
 
 
-def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)) -> User:
+def authenticated_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)) -> User:
     auth_error = AuthError("Invalid JWT")
     try:
         payload = jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])

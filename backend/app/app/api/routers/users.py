@@ -4,7 +4,7 @@ from typing import List
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from app.crud import crud_user
-from app.api.deps import get_db, get_current_user
+from app.api.deps import get_db, authenticated_user
 from app.api.auth import auth
 from app.api.schemas.user import UserSchema, UserCreate
 from app.errors.api import ErrorMessage
@@ -27,7 +27,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
 @router.get("/users",
             response_model=List[UserSchema], tags=['admin'],
-            dependencies=[Depends(get_current_user)])
+            dependencies=[Depends(authenticated_user)])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud_user.get_users(db=db, skip=skip, limit=limit)
     return users
@@ -35,7 +35,7 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 
 @router.get("/users/me", response_model=UserSchema, tags=['users'])
 def read_users_me(
-    current_user: UserSchema = Depends(get_current_user),
+    current_user: UserSchema = Depends(authenticated_user),
     db: Session = Depends(get_db)
 ):
     return current_user

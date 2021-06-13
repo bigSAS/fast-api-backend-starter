@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy.orm import Session
 from app.api.schemas.item import ItemSchema, ItemCreate
 from app.api.schemas.user import UserSchema
-from app.api.deps import get_db, get_current_user
+from app.api.deps import get_db, authenticated_user
 from app.crud import crud_item
 
 
@@ -19,7 +19,7 @@ def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 @router.get("/users/me/items", response_model=List[ItemSchema], tags=['items'])
 def read_user_items(
         skip: int = 0, limit: int = 0,
-        current_user: UserSchema = Depends(get_current_user),
+        current_user: UserSchema = Depends(authenticated_user),
         db: Session = Depends(get_db)):
     items = crud_item.get_user_items(db=db, user_id=current_user.id)
     return items
