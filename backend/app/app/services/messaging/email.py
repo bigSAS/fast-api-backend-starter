@@ -2,7 +2,7 @@ import smtplib
 from email.message import EmailMessage
 from email.errors import MessageError
 import logging
-from app.core.config import settings
+from app.config import settings
 
 
 def send_email(email_recipient, message):

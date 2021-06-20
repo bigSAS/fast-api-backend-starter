@@ -3,12 +3,12 @@ from sqlalchemy.orm import relationship
 from app.database.setup import Base
 
 
-class Item(Base):
-    __tablename__ = "items"
+class Note(Base):
+    __tablename__ = "notes"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
-    description = Column(String, index=True)
+    description = Column(String)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
-    owner = relationship("User", back_populates="items")
+    owner = relationship("User", back_populates="notes")

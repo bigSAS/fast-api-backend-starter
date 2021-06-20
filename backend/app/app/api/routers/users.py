@@ -9,7 +9,7 @@ from app.api.auth import auth
 from app.api.schemas.user import UserSchema, UserCreate
 from app.errors.api import ErrorMessage
 from app.services.messaging.email import send_email
-from app.core.config import settings
+from app.config import settings
 
 
 router = APIRouter()
@@ -63,7 +63,8 @@ def create_user(user: UserCreate, background_tasks: BackgroundTasks, db: Session
 
 
 @router.delete("/users/{user_id}", tags=['admin'])
-def remove_user(user_id: int, db: Session = Depends(get_db)):
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    # todo: do not delete user objects, add property deleted (boolean)
     db_user = crud_user.get_user(db=db, user_id=user_id)
     if not db_user:
         raise HTTPException(status_code=400, detail="User not found")

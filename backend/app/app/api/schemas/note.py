@@ -2,16 +2,16 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class ItemBase(BaseModel):
+class NoteBase(BaseModel):
     title: str
     description: Optional[str] = None
 
 
-class ItemCreate(ItemBase):
+class NoteCreate(NoteBase):
     pass
 
 
-class ItemSchema(ItemBase):
+class NoteSchema(NoteBase):
     id: int
     owner_id: int
 

@@ -10,7 +10,10 @@ from app.crud import crud_user
 from app.api.auth.auth import SECRET_KEY, ALGORITHM
 from app.database.setup import SessionLocal
 from app.errors.api import AuthError
-from app.models.user import User
+from app.database.models.user import User
+
+# todo: move to auth ?
+# todo: get_db move to database package ?
 
 
 def get_db():

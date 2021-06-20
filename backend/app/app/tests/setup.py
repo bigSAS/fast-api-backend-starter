@@ -3,8 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
 from main import app
 from app.api.deps import get_db
-from app.database.base import Base
-from app.core.config import settings
+from app.config import settings
 
 
 def get_url():
@@ -17,19 +16,23 @@ def get_url():
 
 SQLALCHEMY_DATABASE_URL = get_url()
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 TestingSessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=engine)
 
 # Base.metadata.create_all(bind=engine)
 
 
+# noinspection PyUnboundLocalVariable
 def override_get_db():
     try:
         db = TestingSessionLocal()
         yield db
     finally:
-        db.close()
+        try:
+            db.close()
+        except Exception as e:
+            print("failed to close db", repr(e))
 
 
 app.dependency_overrides[get_db] = override_get_db

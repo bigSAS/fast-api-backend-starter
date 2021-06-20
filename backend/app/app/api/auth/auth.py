@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 from app.crud import crud_user
 from app.errors.api import AuthError
-from app.models.user import User
+from app.database.models.user import User
 
 SECRET_KEY = "e41fae79f843957edfc3d3221bc58af4cf3d03a48c77e86f5d02c7f807f8194b"  # todo: config / env var?
 ALGORITHM = "HS256"

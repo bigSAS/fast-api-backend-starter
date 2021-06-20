@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.user import User
-from app.models.item import Item
+from app.database.models.user import User
 from app.api.schemas.user import UserCreate
 from app.api.auth import auth
 

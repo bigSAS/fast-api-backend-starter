@@ -1,5 +1,5 @@
 # Fast API backend starter
-
+# TODO: user creation validation 4 username & email, remove items
 ## Usage
 
 ### With docker-compose
@@ -23,6 +23,11 @@ So, run the first migration:
 docker-compose exec app alembic upgrade head
 ```
 
+Create migration:
+
+```bash
+docker-compose exec app alembic revision --autogenerate -m "{message}"
+```
 
 ### Tests
 **To run the tests:**
@@ -77,7 +82,7 @@ source ./venv/bin/activate
 
 * dodac gitlab yml
 
-* cleanup -> zostaje tylko auth -> update user model -> basic expandable perrmission model -> poczytac alembic o migracjach bo nie pamietam
+* cleanup -> zostaje tylko auth -> update user model -> basic expandable perrmission model
 
 * fix tests
 

@@ -1,6 +1,4 @@
 from pydantic import BaseModel
-from typing import List
-from app.api.schemas.item import ItemSchema
 
 
 class UserBase(BaseModel):
@@ -15,7 +13,6 @@ class UserCreate(UserBase):
 class UserSchema(UserBase):
     id: int
     is_active: bool
-    items: List[ItemSchema] = []
 
     class Config:
         orm_mode = True
