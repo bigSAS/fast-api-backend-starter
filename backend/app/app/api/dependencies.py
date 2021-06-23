@@ -11,12 +11,13 @@ from app.database.setup import SessionLocal
 from app.errors.api import AuthError
 from app.database.models.user import User
 
-# todo: move to auth ?
-# todo: get_db move to database package ?
 from app.repositories.users import UserRepository
 
 
 def get_db():
+    """
+    DB dependency.
+    """
     db = SessionLocal()
     try:
         yield db
@@ -37,7 +38,7 @@ oauth2_scheme = AuthBearer(tokenUrl="token")
 
 def authenticated_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)) -> User:
     """
-    todo: docs
+    User for JWT protected endpoints
     """
     auth_error = AuthError("Invalid JWT")
     try:
@@ -52,3 +53,6 @@ def authenticated_user(db: Session = Depends(get_db), token: str = Depends(oauth
     if user is None:
         raise auth_error
     return user
+
+
+# todo: permitted_user - add dependency when permission model ready
