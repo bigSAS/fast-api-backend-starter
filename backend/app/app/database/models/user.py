@@ -4,6 +4,10 @@ from app.database.setup import Base
 
 
 class User(Base):
+    """
+    User entity. Import as UserEntity
+    # todo: refactor naming, find usages and import as
+    """
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
