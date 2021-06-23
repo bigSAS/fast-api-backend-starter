@@ -1,3 +1,10 @@
+from pydantic import BaseModel
+
+
+class ErrorMessage(BaseModel):
+    message: str
+
+
 class AppError(Exception):
     """
     Base app error class. Use for inheritance.

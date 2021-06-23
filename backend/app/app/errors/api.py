@@ -1,9 +1,4 @@
-from app.errors import AppError
-from pydantic import BaseModel
-
-
-class ErrorMessage(BaseModel):
-    message: str
+from app.errors import AppError, ErrorMessage
 
 
 class ApiError(AppError):
