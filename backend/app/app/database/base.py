@@ -1,3 +1,6 @@
+"""
+# todo: check if needed
+"""
 from app.database.setup import Base
-from app.models.user import User
-from app.models.item import Item
+from app.database.models.user import User
+from app.database.models.note import Note

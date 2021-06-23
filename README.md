@@ -1,5 +1,5 @@
 # Fast API backend starter
-
+# TODO: user creation validation 4 username & email, remove items
 ## Usage
 
 ### With docker-compose
@@ -9,12 +9,25 @@ To run the application you need to have `Docker` and `docker-compose` installed.
 docker-compose up
 ```
 
+#### Swagger  
+
+```/docs```  
+
+#### OpenAPI docs
+
+```/redoc```  
+
 So, run the first migration:
 
 ```bash
 docker-compose exec app alembic upgrade head
 ```
 
+Create migration:
+
+```bash
+docker-compose exec app alembic revision --autogenerate -m "{message}"
+```
 
 ### Tests
 **To run the tests:**
@@ -59,40 +72,15 @@ source ./venv/bin/activate
 
 ## Todoski itd
 
-## wnioski
-
-* proste ;)
-
-* zapierdala
-
-* OAuth ogarniety
-
-* pydantic sztos (poczytac doki co sie zmienilo)
-
 ## todosy
 
-* obczaic compose
 
-* zalozyc repo
+* basic expandable perrmission model
 
 * dodac gitlab yml
 
-* gitignore
-
-* env 4 vscode dev
-
-* cleanup -> zostaje tylko auth -> update user model -> basic expandable perrmission model -> poczytac alembic o migracjach bo nie pamietam
-
-* exception handling
-
-* fix tests
-
-* http files
-
 * readme
 
-* swagger ? jak dodac z auth
-
-* repository pod orm proste
+* fix tests Cucumber tests?
 
 * example ficzer

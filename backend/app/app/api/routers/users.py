@@ -1,22 +1,27 @@
-from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks
+from fastapi import APIRouter, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
-from typing import List
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
-from app.crud import crud_user
-from app.api.deps import get_db, get_current_user
+
+from app.database.models.user import User as UserModel
 from app.api.auth import auth
-from app.api.schemas.user import UserSchema, UserCreate
-from app.errors.api import ErrorMessage
+from app.api.dependencies import get_db, authenticated_user
+from app.api.schemas.user import User, UserCreate, UsersPaginated
+from app.errors.api import ErrorMessage, BadRequestError
+from app.repositories.users import UserRepository
 from app.services.messaging.email import send_email
-from app.core.config import settings
+from app.config import settings
 
 
 router = APIRouter()
 
 
-@router.post("/token", tags=['auth'], responses={400: {'model': ErrorMessage}})
+@router.post("/token", tags=['auth'],
+             responses={400: {'model': ErrorMessage}})
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """
+    todo: docstring
+    """
     user = auth.authenticate_user(db=db, username=form_data.username, password=form_data.password)
 
     access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -25,47 +30,67 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get("/users",
-            response_model=List[UserSchema], tags=['admin'],
-            dependencies=[Depends(get_current_user)])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud_user.get_users(db=db, skip=skip, limit=limit)
-    return users
+@router.get("/users", tags=['admin'],
+            response_model=UsersPaginated,
+            dependencies=[Depends(authenticated_user)])
+def list_users(page: int = 0, limit: int = 100, order_by: str = None, db: Session = Depends(get_db)):
+    """
+    List all users with pagination.
+    """
+    return UsersPaginated.from_paginated_query(
+        UserRepository(db).all_paginated(
+            page=page,
+            limit=limit,
+            order=order_by
+        )
+    )
 
 
-@router.get("/users/me", response_model=UserSchema, tags=['users'])
-def read_users_me(
-    current_user: UserSchema = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
+@router.get("/users/me", tags=['users'],
+            response_model=User)
+def get_request_user(current_user: User = Depends(authenticated_user)):
+    """
+    todo: docstring
+    """
     return current_user
 
 
-@router.get("/users/{user_id}", response_model=UserSchema, tags=['users'])
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud_user.get_user(db=db, user_id=user_id)
-    if db_user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    return db_user
+@router.get("/users/{user_id}", tags=['users'],
+            response_model=User)
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    """
+    todo: docstring
+    """
+    return UserRepository(db).get(entity_id=user_id)
+
+# todo: refactor rest using repository
 
 
-@router.post("/users", response_model=UserSchema, tags=['users'])
+@router.post("/users", tags=['users'],
+             response_model=User)
 def create_user(user: UserCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    db_user = crud_user.get_user_by_email(db=db, email=user.email)
+    user_repository = UserRepository(db)
+    db_user = user_repository.get_by(email=user.email, ignore_not_found=True)
     if db_user:
-        raise HTTPException(status_code=400,
-                            detail="Email already registered")
+        raise BadRequestError("Email already registered")
+
+    # todo: check this l8r
     if settings.SMTP_SERVER != "your_stmp_server_here":
         background_tasks.add_task(send_email, user.email,
                                   message=f"You've created your account!")
-    return crud_user.create_user(db=db, user=user)
+    new_user = UserModel(
+        username=user.username,
+        email=user.email,
+        hashed_password=auth.get_password_hash(user.password)
+    )
+    user_repository.save(new_user)
+    return new_user
 
 
 @router.delete("/users/{user_id}", tags=['admin'])
-def remove_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud_user.get_user(db=db, user_id=user_id)
-    if not db_user:
-        raise HTTPException(status_code=400, detail="User not found")
-    crud_user.delete_user(db=db, user=db_user)
-    return {"detail": f"User with id {db_user.id} successfully deleted"}
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    # todo: do not delete user objects, add property deleted (boolean)
+    user = UserRepository(db).get(user_id)
+    # todo: soft delete user (.deleted=True)
+    print(user)
+    return {"detail": f"User with id {user_id} successfully deleted"}

@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from app.api.routers import users
-from app.core.config import settings
+from app.api.routers import notes
+from app.config import settings
 from app.errors.api import ApiError, UnknownApiError
 
 tags_metadata = [
@@ -17,6 +18,10 @@ tags_metadata = [
         "name": "users",
         "description": "Operations with users"
     },
+    {
+        "name": "notes",
+        "description": "Operation with notes"
+    },
 ]
 
 app = FastAPI(
@@ -27,10 +32,14 @@ app = FastAPI(
 )
 
 
-# app.include_router(items.router)  # todo: remove all items related code ;) -> l8r
 app.include_router(users.router)
+app.include_router(notes.router)
 
 
+# todo: log requests in error handlers -> read about fast api logging first
+
+
+# noinspection PyUnusedLocal
 @app.exception_handler(ApiError)
 def handle_api_error(request, error: ApiError):
     """
@@ -43,6 +52,7 @@ def handle_api_error(request, error: ApiError):
     )
 
 
+# noinspection PyUnusedLocal
 @app.exception_handler(Exception)
 def handle_unknown_api_error(request, exception: Exception):
     """
@@ -53,4 +63,3 @@ def handle_unknown_api_error(request, exception: Exception):
         status_code=error.status_code,
         content={'message': error.error_message.message}
     )
-

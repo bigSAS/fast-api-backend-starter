@@ -1,6 +1,7 @@
-from pydantic import BaseModel
 from typing import List
-from app.api.schemas.item import ItemSchema
+
+from pydantic import BaseModel
+from app.api.schemas.pagination import PaginatedModel
 
 
 class UserBase(BaseModel):
@@ -12,10 +13,15 @@ class UserCreate(UserBase):
     password: str
 
 
-class UserSchema(UserBase):
+class User(UserBase):
     id: int
     is_active: bool
-    items: List[ItemSchema] = []
+    class Config: orm_mode = True
 
-    class Config:
-        orm_mode = True
+
+class UsersPaginated(PaginatedModel):
+    """
+    User list with pagination.
+    """
+    items: List[User]
+    class Meta: orm_model_class = User

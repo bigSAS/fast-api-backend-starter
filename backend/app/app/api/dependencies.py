@@ -2,18 +2,22 @@ from typing import Optional
 from starlette.requests import Request
 
 from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException
 from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 from app.api.schemas.token import TokenData
-from app.crud import crud_user
 from app.api.auth.auth import SECRET_KEY, ALGORITHM
 from app.database.setup import SessionLocal
 from app.errors.api import AuthError
-from app.models.user import User
+from app.database.models.user import User
+
+from app.repositories.users import UserRepository
 
 
 def get_db():
+    """
+    DB dependency.
+    """
     db = SessionLocal()
     try:
         yield db
@@ -32,7 +36,10 @@ class AuthBearer(OAuth2PasswordBearer):
 oauth2_scheme = AuthBearer(tokenUrl="token")
 
 
-def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)) -> User:
+def authenticated_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)) -> User:
+    """
+    User for JWT protected endpoints
+    """
     auth_error = AuthError("Invalid JWT")
     try:
         payload = jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
@@ -42,7 +49,10 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_
         token_data = TokenData(username=username)
     except JWTError:
         raise auth_error
-    user = crud_user.get_user_by_username(db=db, username=token_data.username)
+    user = UserRepository(db).get_by(username=token_data.username, ignore_not_found=True)
     if user is None:
         raise auth_error
     return user
+
+
+# todo: permitted_user - add dependency when permission model ready

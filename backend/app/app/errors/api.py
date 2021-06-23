@@ -1,9 +1,4 @@
-from app.errors import AppError
-from pydantic import BaseModel
-
-
-class ErrorMessage(BaseModel):
-    message: str
+from app.errors import AppError, ErrorMessage
 
 
 class ApiError(AppError):
@@ -48,6 +43,14 @@ class BadRequestError(ApiError):
     """
     def __init__(self, message: str):
         super().__init__(message, 400)
+
+
+class NotFoundError(ApiError):
+    """
+    Api not found error [404]
+    """
+    def __init__(self, message: str):
+        super().__init__(message, 404)
 
 
 class UnknownApiError(ApiError):
