@@ -7,6 +7,7 @@ from paginate_sqlalchemy import SqlalchemyOrmPage
 from app.errors.repository import InvalidQueryLimitError, InvalidOrderByError, EntityNotFoundError, TransactionError
 
 # todo: up ver -> sqlalchemy, pydantic !!!
+# todo: adapt fiql in repository ?
 
 
 class Paginated(SqlalchemyOrmPage): pass  # https://github.com/Pylons/paginate_sqlalchemy
