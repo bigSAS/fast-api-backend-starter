@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
 from main import app
-from app.api.deps import get_db
+from app.api.dependencies import get_db
 from app.config import settings
 
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.api.schemas.note import Note, NoteCreate, NotesPaginated
 from app.api.schemas.user import User
-from app.api.deps import get_db, authenticated_user
+from app.api.dependencies import get_db, authenticated_user
 from app.repositories.notes import NotesRepository
 from app.database.models.note import Note as NoteEntity
 

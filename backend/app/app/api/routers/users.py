@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from app.database.models.user import User as UserModel
 from app.api.auth import auth
-from app.api.deps import get_db, authenticated_user
+from app.api.dependencies import get_db, authenticated_user
 from app.api.schemas.user import User, UserCreate, UsersPaginated
 from app.errors.api import ErrorMessage, BadRequestError
 from app.repositories.users import UserRepository
