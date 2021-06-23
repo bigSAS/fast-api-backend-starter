@@ -1,5 +1,7 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+
+from app.api.schemas.pagination import PaginatedModel
 
 
 class NoteBase(BaseModel):
@@ -7,13 +9,18 @@ class NoteBase(BaseModel):
     description: Optional[str] = None
 
 
-class NoteCreate(NoteBase):
-    pass
+class NoteCreate(NoteBase): pass
 
 
-class NoteSchema(NoteBase):
+class Note(NoteBase):
     id: int
     owner_id: int
+    class Config: orm_mode = True
 
-    class Config:
-        orm_mode = True
+
+class NotesPaginated(PaginatedModel):
+    """
+    Note list with pagination.
+    """
+    items: List[Note]
+    class Meta: orm_model_class = Note

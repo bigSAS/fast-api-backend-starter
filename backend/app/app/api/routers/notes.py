@@ -1,35 +1,63 @@
 from fastapi import APIRouter, Depends
-from typing import List
 from sqlalchemy.orm import Session
-from app.api.schemas.note import NoteSchema, NoteCreate
-from app.api.schemas.user import UserSchema
+from app.api.schemas.note import Note, NoteCreate, NotesPaginated
+from app.api.schemas.user import User
 from app.api.deps import get_db, authenticated_user
-from app.crud import crud_note
-
+from app.repositories.notes import NotesRepository
+from app.database.models.note import Note as NoteEntity
 
 router = APIRouter()
 
 
-@router.get("/notes", response_model=List[NoteSchema], tags=['admin'])
-def read_notes(
-        skip: int = 0, limit: int = 100,
+@router.get("/notes", tags=['admin'],
+            response_model=NotesPaginated,
+            dependencies=[Depends(authenticated_user)])
+def list_notes(
+        page: int = 0, limit: int = 100, order_by: str = None,
         db: Session = Depends(get_db)):
-    notes = crud_note.get_notes(db=db, skip=skip, limit=limit)
-    return notes
+    """
+    todo: ...
+    """
+    return NotesPaginated.from_paginated_query(
+        NotesRepository(db).all_paginated(page=page, limit=limit, order=order_by)
+    )
 
 
-@router.get("/notes/mine", response_model=List[NoteSchema], tags=['notes'])
+@router.get("/notes/mine", tags=['notes'],
+            response_model=NotesPaginated)
 def read_user_notes(
-        skip: int = 0, limit: int = 100,
+        page: int = 0, limit: int = 100, order_by: str = None,
         db: Session = Depends(get_db),
-        current_user: UserSchema = Depends(authenticated_user)):
-    notes = crud_note.get_user_notes(db=db, user_id=current_user.id, skip=skip, limit=limit)
-    return notes
+        current_user: User = Depends(authenticated_user)):
+    """
+    todo: ...
+    """
+    return NotesPaginated.from_paginated_query(
+        NotesRepository(db).filter_paginated(
+            NoteEntity.owner_id == current_user.id,
+            page=page,
+            limit=limit,
+            order=order_by
+        )
+    )
 
 
-@router.post("/notes/create", response_model=NoteSchema, tags=['notes'])
-def create_note_for_user(
+@router.post("/notes/create", tags=['notes'],
+             response_model=Note)
+def create_note_for_current_user(
         note: NoteCreate,
         db: Session = Depends(get_db),
-        current_user: UserSchema = Depends(authenticated_user)):
-    return crud_note.create_user_note(db=db, note=note, user_id=current_user.id)
+        current_user: User = Depends(authenticated_user)):
+    """
+    todo: ...
+    """
+    new_note = NoteEntity(
+        owner_id=current_user.id,
+        title=note.title,
+        description=note.description
+    )
+    NotesRepository(db).save(new_note)
+    return new_note
+
+
+# todo: delete user note

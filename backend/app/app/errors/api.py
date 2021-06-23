@@ -50,6 +50,14 @@ class BadRequestError(ApiError):
         super().__init__(message, 400)
 
 
+class NotFoundError(ApiError):
+    """
+    Api not found error [404]
+    """
+    def __init__(self, message: str):
+        super().__init__(message, 404)
+
+
 class UnknownApiError(ApiError):
     """
     Api unknown error (bug) [500]

@@ -4,9 +4,9 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from typing import Optional
-from app.crud import crud_user
 from app.errors.api import AuthError
 from app.database.models.user import User
+from app.repositories.users import UserRepository
 
 SECRET_KEY = "e41fae79f843957edfc3d3221bc58af4cf3d03a48c77e86f5d02c7f807f8194b"  # todo: config / env var?
 ALGORITHM = "HS256"
@@ -25,7 +25,7 @@ def get_password_hash(password: str) -> str:
 
 
 def authenticate_user(username: str, password: str, db: Session = Depends()) -> User:
-    user = crud_user.get_user_by_username(db, username)
+    user = UserRepository(db).get_by(username=username, ignore_not_found=True)
     if not user: raise AuthError('Invalid username or password')
     if not _is_password_valid(password, user.hashed_password): raise AuthError('Invalid username or password')
     return user
