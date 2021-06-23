@@ -72,22 +72,15 @@ source ./venv/bin/activate
 
 ## Todoski itd
 
-## wnioski
-
-* pydantic sztos (poczytac doki co sie zmienilo)
-
 ## todosy
 
-* obczaic compose
+
+* basic expandable perrmission model
 
 * dodac gitlab yml
 
-* cleanup -> zostaje tylko auth -> update user model -> basic expandable perrmission model
-
-* fix tests
-
 * readme
 
-* repository pod orm proste
+* fix tests Cucumber tests?
 
 * example ficzer
