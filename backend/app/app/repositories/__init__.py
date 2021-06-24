@@ -92,6 +92,7 @@ class Repository(ABC):
             raise e  # re-raise (bug to fix)
 
     def delete(self, entity_id: int) -> None:
+        # todo: raise not found when nothing to delete???
         try:
             self.session.query(self.entity).filter(self.entity.id == entity_id).delete()
             self.session.commit()

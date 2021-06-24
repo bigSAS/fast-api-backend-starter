@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException
 from jose import jwt, JWTError
 from sqlalchemy.orm import Session
+
 from app.api.schemas.token import TokenData
 from app.api.auth.auth import SECRET_KEY, ALGORITHM
 from app.database.setup import SessionLocal
@@ -43,10 +44,7 @@ def authenticated_user(db: Session = Depends(get_db), token: str = Depends(oauth
     auth_error = AuthError("Invalid JWT")
     try:
         payload = jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise auth_error
-        token_data = TokenData(username=username)
+        token_data = TokenData(**payload)
     except JWTError:
         raise auth_error
     user = UserRepository(db).get_by(username=token_data.username, ignore_not_found=True)
@@ -55,4 +53,19 @@ def authenticated_user(db: Session = Depends(get_db), token: str = Depends(oauth
     return user
 
 
-# todo: permitted_user - add dependency when permission model ready
+class Restricted(object):
+    """
+    Permission dependency.
+    Example:
+        todo: ...
+    """
+
+    def __init__(self, permissions_classes: list):
+        self.permissions_classes = permissions_classes
+
+    async def __call__(self, request: Request):
+        token = oauth2_scheme
+        decoded_token = jwt.decode(await token(request), key=SECRET_KEY, algorithms=[ALGORITHM])
+        token_data: TokenData = TokenData(**decoded_token)
+        for permission_class in self.permissions_classes:  # permission must be a app.api.permissions.Permission
+            permission_class().check_permission(request=request, token_data=token_data)

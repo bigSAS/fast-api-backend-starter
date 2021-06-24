@@ -75,9 +75,7 @@ source ./venv/bin/activate
 ## todosy
 
 
-* basic expandable perrmission model
-
-* dodac gitlab yml
+* gitlab yml
 
 * readme
 

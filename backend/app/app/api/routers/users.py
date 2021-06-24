@@ -3,18 +3,25 @@ from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 
+from app.api.routers import responses as res
+from app.api.permissions.user_permissions import IsAdmin
 from app.database.models.user import User as UserModel
 from app.api.auth import auth
-from app.api.dependencies import get_db, authenticated_user
+from app.api.dependencies import get_db, authenticated_user, Restricted
 from app.api.schemas.user import User, UserCreate, UsersPaginated
 from app.errors.api import ErrorMessage, BadRequestError
+from app.repositories.permissions import PermissionsRepository
 from app.repositories.users import UserRepository
 from app.services.messaging.email import send_email
 from app.config import settings
 
+from app.database.models.permission import Permission as PermissionEntity
+
 
 router = APIRouter()
 
+
+# todo: update responses and permissions similat to permissions router
 
 @router.post("/token", tags=['auth'],
              responses={400: {'model': ErrorMessage}})
@@ -25,8 +32,12 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     user = auth.authenticate_user(db=db, username=form_data.username, password=form_data.password)
 
     access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = auth.create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires)
+    user_permissions = PermissionsRepository(db).filter(PermissionEntity.user_id == user.id)
+    data = {
+        'username': user.username,
+        'permissions': [{'name': permission.name, 'data': permission.data} for permission in user_permissions]
+    }
+    access_token = auth.create_access_token(data=data, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -87,10 +98,17 @@ def create_user(user: UserCreate, background_tasks: BackgroundTasks, db: Session
     return new_user
 
 
-@router.delete("/users/{user_id}", tags=['admin'])
+@router.delete("/users/{user_id}", tags=['admin'],
+               status_code=204,
+               response_model=None,
+               responses=res.AUTHENTICATED | res.PROTECTED | res.NO_CONTENT,
+               dependencies=[
+                 Depends(authenticated_user),
+                 Depends(Restricted([IsAdmin]))
+               ])
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     # todo: do not delete user objects, add property deleted (boolean)
     user = UserRepository(db).get(user_id)
     # todo: soft delete user (.deleted=True)
     print(user)
-    return {"detail": f"User with id {user_id} successfully deleted"}
+    return None

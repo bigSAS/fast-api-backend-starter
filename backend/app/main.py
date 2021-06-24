@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from app.api.routers import users
+from app.api.routers import permissions
 from app.api.routers import notes
 from app.config import settings
 from app.errors.api import ApiError, UnknownApiError
@@ -27,12 +28,13 @@ tags_metadata = [
 app = FastAPI(
     title=settings.APP_NAME,
     description="This is a sas-kodzi project, with auto docs for the API and everything",
-    version="0.0.1",
+    version="0.2.0",
     openapi_tags=tags_metadata
 )
 
 
 app.include_router(users.router)
+app.include_router(permissions.router)
 app.include_router(notes.router)
 
 
