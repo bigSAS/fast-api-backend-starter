@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from app.api.routers import responses as res
 from app.api.permissions.user_permissions import IsAdmin
-from app.database.models.user import User as UserModel
+from app.database.models.user import User as UserEntity
 from app.api.auth import auth
 from app.api.dependencies import get_db, authenticated_user, Restricted
 from app.api.schemas.user import User, UserCreate, UsersPaginated
@@ -35,6 +35,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     user_permissions = PermissionsRepository(db).filter(PermissionEntity.user_id == user.id)
     data = {
         'username': user.username,
+        'email': user.email,
         'permissions': [{'name': permission.name, 'data': permission.data} for permission in user_permissions]
     }
     access_token = auth.create_access_token(data=data, expires_delta=access_token_expires)
@@ -89,7 +90,7 @@ def create_user(user: UserCreate, background_tasks: BackgroundTasks, db: Session
     if settings.SMTP_SERVER != "your_stmp_server_here":
         background_tasks.add_task(send_email, user.email,
                                   message=f"You've created your account!")
-    new_user = UserModel(
+    new_user = UserEntity(
         username=user.username,
         email=user.email,
         hashed_password=auth.get_password_hash(user.password)
@@ -107,8 +108,5 @@ def create_user(user: UserCreate, background_tasks: BackgroundTasks, db: Session
                  Depends(Restricted([IsAdmin]))
                ])
 def delete_user(user_id: int, db: Session = Depends(get_db)):
-    # todo: do not delete user objects, add property deleted (boolean)
-    user = UserRepository(db).get(user_id)
-    # todo: soft delete user (.deleted=True)
-    print(user)
+    UserRepository(db).delete(user_id)
     return None

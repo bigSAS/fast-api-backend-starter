@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from typing import Optional
 from app.errors.api import AuthError
-from app.database.models.user import User
+from app.database.models.user import User as UserEntity
 from app.repositories.users import UserRepository
 
 SECRET_KEY = "e41fae79f843957edfc3d3221bc58af4cf3d03a48c77e86f5d02c7f807f8194b"  # todo: config / env var?
@@ -24,8 +24,8 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def authenticate_user(username: str, password: str, db: Session = Depends()) -> User:
-    user = UserRepository(db).get_by(username=username, ignore_not_found=True)
+def authenticate_user(username: str, password: str, db: Session = Depends()) -> UserEntity:
+    user = UserRepository(db).get_by(username=username, is_deleted=False, ignore_not_found=True)
     if not user: raise AuthError('Invalid username or password')
     if not _is_password_valid(password, user.hashed_password): raise AuthError('Invalid username or password')
     return user

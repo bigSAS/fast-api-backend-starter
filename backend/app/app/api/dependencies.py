@@ -1,4 +1,3 @@
-from typing import Optional
 from starlette.requests import Request
 
 from fastapi.security import OAuth2PasswordBearer
@@ -10,7 +9,7 @@ from app.api.schemas.token import TokenData
 from app.api.auth.auth import SECRET_KEY, ALGORITHM
 from app.database.setup import SessionLocal
 from app.errors.api import AuthError
-from app.database.models.user import User
+from app.database.models.user import User as UserEntity
 
 from app.repositories.users import UserRepository
 
@@ -27,7 +26,7 @@ def get_db():
 
 
 class AuthBearer(OAuth2PasswordBearer):
-    async def __call__(self, request: Request) -> Optional[str]:
+    async def __call__(self, request: Request) -> str:
         try:
             return await super().__call__(request)
         except HTTPException:
@@ -37,7 +36,7 @@ class AuthBearer(OAuth2PasswordBearer):
 oauth2_scheme = AuthBearer(tokenUrl="token")
 
 
-def authenticated_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)) -> User:
+def authenticated_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)) -> UserEntity:
     """
     User for JWT protected endpoints
     """
@@ -45,6 +44,7 @@ def authenticated_user(db: Session = Depends(get_db), token: str = Depends(oauth
     try:
         payload = jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
         token_data = TokenData(**payload)
+        print("@token:", token_data)
     except JWTError:
         raise auth_error
     user = UserRepository(db).get_by(username=token_data.username, ignore_not_found=True)

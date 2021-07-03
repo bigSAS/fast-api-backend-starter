@@ -15,6 +15,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
+    is_deleted = Column(Boolean, default=False, nullable=False)
 
     notes = relationship("Note", back_populates="owner", cascade="all, delete")
     permissions = relationship("Permission", back_populates="user", cascade="all, delete")

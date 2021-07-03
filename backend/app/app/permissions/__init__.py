@@ -7,7 +7,7 @@ class PermissionDefinition(NamedTuple):
     has_data: bool
 
 
-class UserPermission(Enum):
+class UserPermission(Enum):  # todo: duplicate?
     IS_ADMIN = PermissionDefinition(name="IS_ADMIN", has_data=False)
     IS_GROUP_MEMBER = PermissionDefinition(name="HAS_ACTION_ACCESS", has_data=True)  # ['group_a', 'group_n']
     # todo: UserGroupEntity ??? <- l8r

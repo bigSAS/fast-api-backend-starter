@@ -1,10 +1,13 @@
 from abc import ABC
+from typing import Optional
+
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from sqlalchemy.orm import Query
 from paginate_sqlalchemy import SqlalchemyOrmPage
 
 from app.errors.repository import InvalidQueryLimitError, InvalidOrderByError, EntityNotFoundError, TransactionError
+from app.database.setup import Base as Entity
 
 # todo: up ver -> sqlalchemy, pydantic !!!
 # todo: adapt fiql in repository ?
@@ -17,7 +20,7 @@ class Repository(ABC):
     """
     Repository abstraction.
 
-    todo: example usage
+    examples in repositories.users, repositories.permissions
     """
     entity = NotImplemented
     max_query_limit = 100
@@ -31,18 +34,29 @@ class Repository(ABC):
     def session(self) -> Session:
         return self._db_session
 
-    def get(self, entity_id: int, ignore_not_found: bool = False):  # todo: check return type in alchemy docs
-        entity = self.session.query(self.entity).get(entity_id)
-        if not entity and not ignore_not_found:
-            raise EntityNotFoundError(f'{self.entity.__name__}[id: {entity_id}] not found.')
-        return entity
+    def get_by(self, **kwargs) -> Optional[Entity]:
+        """
+        Gets object by filters.
+        Filters must be bassed using kwargs and mach Entity attributes.
 
-    def get_by(self, **kwargs):  # todo: check return type in alchemy docs
+        ex.
+        repo.get_by(name=foo, email=bar, ignore_not_found=True)
+        repo.get_by(name=foo, email=bar)
+        repo.get_by(id=1)
+        repo.get(1) - proxy for id
+        repo.get(1, ignore_not_found=True) - proxy for id ignoring not found
+
+        When ignore_not_found=True - returns None when object is not found
+        When ignore_not_found=True - raises EntityNotFoundError when object is not found
+        """
         ignore_not_found = kwargs.pop('ignore_not_found', False)
         entity = self.session.query(self.entity).filter_by(**kwargs).first()
         if not entity and not ignore_not_found:
             raise EntityNotFoundError(f'{self.entity.__name__}[{kwargs}] not found.')
         return entity
+
+    def get(self, entity_id: int, ignore_not_found: bool = False) -> Optional[Entity]:
+        return self.get_by(id=entity_id, ignore_not_found=ignore_not_found)
 
     def all(self, order: str = None) -> Query:
         if order: return self.session.query(self.entity).order_by(text(order)).all()
@@ -92,14 +106,9 @@ class Repository(ABC):
             raise e  # re-raise (bug to fix)
 
     def delete(self, entity_id: int) -> None:
-        # todo: raise not found when nothing to delete???
-        try:
-            self.session.query(self.entity).filter(self.entity.id == entity_id).delete()
-            self.session.commit()
-        except Exception as e:
-            if '???' in repr(e):  # todo: grab error related to delete
-                raise TransactionError(f"Transaction failed: \nException msg: " + repr(e))
-            raise e  # re-raise (bug to fix)
+        obj = self.get(entity_id)
+        self.session.delete(obj)
+        self.session.commit()
 
     def _validate_query_limit(self, limit: int) -> None:
         if limit < 1:

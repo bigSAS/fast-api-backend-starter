@@ -74,6 +74,7 @@ source ./venv/bin/activate
 
 ## todosy
 
+* dodac skrypt/komende z cli aby utworzy default admin usera admin:admin
 
 * gitlab yml
 
