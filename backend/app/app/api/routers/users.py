@@ -8,7 +8,8 @@ from app.database.models.user import User as UserEntity
 from app.api.auth import auth
 from app.api.dependencies import get_db, authenticated_user, Restricted
 from app.api.schemas.user import User, UserCreate, UsersPaginated
-from app.errors.api import ErrorMessage, BadRequestError
+from app.errors.api import ErrorMessage, BadRequestError, NotFoundError
+from app.errors.repository import EntityNotFoundError
 from app.repositories.permissions import PermissionsRepository
 from app.repositories.users import UserRepository
 # from app.services.messaging.email import send_email
@@ -67,7 +68,7 @@ async def get_request_user(current_user: User = Depends(authenticated_user)):
 
 
 @router.get("/users/{user_id}", tags=['users'],
-            responses=res.AUTHENTICATED,
+            responses=res.AUTHENTICATED | res.NOT_FOUND,
             dependencies=[Depends(authenticated_user)],
             response_model=User)
 async def get_user(user_id: int, db: Session = Depends(get_db)):
@@ -102,11 +103,14 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
 @router.delete("/users/{user_id}", tags=['admin'],
                status_code=204,
                response_model=None,
-               responses=res.AUTHENTICATED | res.PROTECTED | res.NO_CONTENT,
+               responses=res.AUTHENTICATED | res.PROTECTED | res.NO_CONTENT | res.NOT_FOUND,
                dependencies=[
                  Depends(authenticated_user),
                  Depends(Restricted([IsAdmin]))
                ])
 def delete_user(user_id: int, db: Session = Depends(get_db)):
-    UserRepository(db).delete(user_id)
+    try:
+        UserRepository(db).delete(user_id)
+    except EntityNotFoundError as e:
+        raise NotFoundError(repr(e))
     return None
