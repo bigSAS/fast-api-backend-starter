@@ -27,6 +27,7 @@ Create migration:
 
 ```bash
 docker-compose exec app alembic revision --autogenerate -m "{message}"
+docker-compose exec app alembic upgrade head
 ```
 
 ### Tests

@@ -18,3 +18,4 @@ class User(Base):
 
     notes = relationship("Note", back_populates="owner", cascade="all, delete")
     permissions = relationship("Permission", back_populates="user", cascade="all, delete")
+    groups = relationship("GroupUser", back_populates="user", cascade="all, delete")
