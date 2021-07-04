@@ -1,12 +1,12 @@
-from app.api.permissions import Permission
-from app.api.schemas.permission import Action
+from app.api.permissions import BasePermission
+from app.api.schemas.permission import Permissions
 from app.api.schemas.token import TokenData
 from app.errors.api import ForbiddenError
 
 
-class IsAdmin(Permission):
+class IsAdmin(BasePermission):
     """
-    todo: ...
+    Check if JWT user is admin.
     """
     def check_permission(self, **kwargs):
         """
@@ -14,8 +14,6 @@ class IsAdmin(Permission):
           * token_data: TokenData
         """
         token: TokenData = kwargs.get("token_data")
-        # todo: find in .permissions
-        print("@JWT:data", token)
-        is_admin = [p for p in token.permissions if p.get('name', None) == Action.IS_ADMIN]
+        is_admin = [p for p in token.permissions if p.get('name', None) == Permissions.IS_ADMIN]
         if not is_admin:
             raise ForbiddenError("Admins only ... sorry :)")

@@ -23,7 +23,7 @@ async def list_notes(
         page: int = 0, limit: int = 100, order_by: str = None,
         db: Session = Depends(get_db)):
     """
-    todo: ...
+    List notes with pagination.
     """
     return NotesPaginated.from_paginated_query(
         NotesRepository(db).all_paginated(page=page, limit=limit, order=order_by)
@@ -38,7 +38,7 @@ async def read_user_notes(
         db: Session = Depends(get_db),
         current_user: User = Depends(authenticated_user)):
     """
-    todo: ...
+    List user notes with pagination.
     """
     return NotesPaginated.from_paginated_query(
         NotesRepository(db).filter_paginated(
@@ -58,7 +58,7 @@ async def create_note_for_current_user(
         db: Session = Depends(get_db),
         current_user: User = Depends(authenticated_user)):
     """
-    todo: ...
+    Create note for user.
     """
     new_note = NoteEntity(
         owner_id=current_user.id,
@@ -67,6 +67,3 @@ async def create_note_for_current_user(
     )
     NotesRepository(db).save(new_note)
     return new_note
-
-
-# todo: delete user note

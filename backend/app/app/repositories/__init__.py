@@ -101,9 +101,7 @@ class Repository(ABC):
             self.session.add(entity)
             self.session.commit()
         except Exception as e:
-            if '???' in repr(e):  # todo: grab error related to insert
-                raise TransactionError(f"Transaction failed: \nException msg: " + repr(e))
-            raise e  # re-raise (bug to fix)
+            raise TransactionError(f"Transaction failed: \nException msg: " + repr(e))
 
     def delete(self, entity_id: int) -> None:
         obj = self.get(entity_id)

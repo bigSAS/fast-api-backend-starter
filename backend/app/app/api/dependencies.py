@@ -57,7 +57,13 @@ class Restricted(object):
     """
     Permission dependency.
     Example:
-        todo: ...
+        @router.post("/url", tags=['foo'],
+             response_model=Foo,
+             responses=res.AUTHENTICATED | res.PROTECTED,
+             dependencies=[
+                 Depends(authenticated_user),
+                 Depends(Restricted([IsAdmin]))
+             ])
     """
 
     def __init__(self, permissions_classes: list):

@@ -22,7 +22,7 @@ async def list_permissions(
         page: int = 0, limit: int = 100, order_by: str = None,
         db: Session = Depends(get_db)):
     """
-    todo: ...
+    List permissions paginated.
     """
     return PermissionsPaginated.from_paginated_query(
         PermissionsRepository(db).all_paginated(page=page, limit=limit, order=order_by)
@@ -41,7 +41,7 @@ async def list_user_permissions(
         page: int = 0, limit: int = 100, order_by: str = None,
         db: Session = Depends(get_db)):
     """
-    todo: ...
+    List user permissions paginated (by user id).
     """
     return PermissionsPaginated.from_paginated_query(
         PermissionsRepository(db).filter_paginated(
@@ -87,9 +87,7 @@ async def delete_permission(
         permission_id: int,
         db: Session = Depends(get_db)):
     """
-    Delete permission by id
+    Delete permission by id.
     """
     PermissionsRepository(db).delete(permission_id)
     return ''
-
-# todo: delete user note

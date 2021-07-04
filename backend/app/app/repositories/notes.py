@@ -4,6 +4,6 @@ from app.repositories import Repository
 
 class NotesRepository(Repository):
     """
-    todo: ...
+    Notes repository.
     """
     entity = NoteEntity

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class Permission(ABC):
+class BasePermission(ABC):
     """
     Permission abstraction.
     Child class should implement has_permission method.

@@ -1,23 +1,18 @@
-from enum import Enum
-
 from pydantic import BaseModel
 from typing import Optional, List
 
 from app.api.schemas.pagination import PaginatedModel
+from enum import Enum
 
 
-class Action(str, Enum):
-    """
-    Actions enum for naming permissions
-    """
-    IS_ADMIN = "IS_ADMIN"  # is admin user, can do anything LOL
-    # todo: rest of api actions
-    FOO_ACTION = "FOO_ACTION"
-    BAR_ACTION = "BAR_ACTION"
+class Permissions(str, Enum):
+    IS_ADMIN = "IS_ADMIN"
+    IS_GROUP_MEMBER = "IS_GROUP_MEMBER"
+    HAS_ACTION_ACCESS = "HAS_ACTION_ACCESS"
 
 
 class PermissionBase(BaseModel):
-    name: Action
+    name: Permissions
     data: Optional[dict] = None
 
 

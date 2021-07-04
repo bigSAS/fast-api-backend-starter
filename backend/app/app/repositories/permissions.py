@@ -4,6 +4,6 @@ from app.repositories import Repository
 
 class PermissionsRepository(Repository):
     """
-    todo: ...
+    Permissions repository.
     """
     entity = PermissionEntity
