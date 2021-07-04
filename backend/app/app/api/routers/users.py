@@ -31,6 +31,7 @@ async def get_jwt(form_data: OAuth2PasswordRequestForm = Depends(), db: Session 
 
     access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
     user_permissions = PermissionsRepository(db).filter(PermissionEntity.user_id == user.id)
+    groups = []  # todo: GroupUserRepository <- create repo & filter by user id
     data = {
         'username': user.username,
         'email': user.email,

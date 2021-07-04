@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from app.api.routers import users
 from app.api.routers import permissions
 from app.api.routers import notes
+from app.api.routers import user_groups
 from app.config import settings
 from app.errors.api import ApiError, UnknownApiError
 
@@ -34,6 +35,7 @@ app = FastAPI(
 
 
 app.include_router(users.router)
+app.include_router(user_groups.router)
 app.include_router(permissions.router)
 app.include_router(notes.router)
 

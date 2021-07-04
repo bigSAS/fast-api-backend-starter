@@ -14,5 +14,3 @@ class Permission(Base):
     name = Column(String, index=True)  # PermissionDefinition.name
     data = Column(JSONB, nullable=True)  # JSON data if needed (PermissionDefinition.has_data)
     user_id = Column(Integer, ForeignKey("users.id"))
-
-    user = relationship("User", back_populates="permissions")

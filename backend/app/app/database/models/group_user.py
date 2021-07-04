@@ -12,6 +12,3 @@ class GroupUser(Base):
     id = Column(Integer, primary_key=True, index=True)
     group_id = Column(Integer, ForeignKey("user_groups.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
-
-    user = relationship("User", back_populates="groups")
-    group = relationship("UserGroup", back_populates="users")
