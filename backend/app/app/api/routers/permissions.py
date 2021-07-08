@@ -90,4 +90,4 @@ async def delete_permission(
     Delete permission by id.
     """
     PermissionsRepository(db).delete(permission_id)
-    return ''
+    return None

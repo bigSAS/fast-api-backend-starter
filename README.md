@@ -77,7 +77,11 @@ source ./venv/bin/activate
 
 * dodac skrypt/komende z cli aby utworzy default admin usera admin:admin
 
-* gitlab yml
+* pobadac endpointy ktore moga rzucac not found z repository i lapac jakos spoko err i konwertowac na api statusy 400 / 404 ect.
+
+* dodac permission IsGroupMember i w JWT update aby zwracalo id grup do ktorych nalezy
+
+* gitlab yml / travis ? / jenkins ?
 
 * readme
 
