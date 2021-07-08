@@ -137,14 +137,14 @@ async def list_group_users(
     )
 
 
-@router.get("/user-groups/mine", tags=['admin'],  # todo: new scope - logged in user instead of admin
+@router.get("/user-groups/my", tags=['admin'],  # todo: new scope - logged in user instead of admin
             response_model=GroupUsersPaginated,
             responses=res.AUTHENTICATED | res.PROTECTED,
             dependencies=[
                 Depends(Restricted([]))
             ])
-async def list_group_users(
-        user = Depends(authenticated_user),
+async def list_my_user_groups(
+        user=Depends(authenticated_user),
         page: int = 0, limit: int = 100, order_by: str = None,
         db: Session = Depends(get_db)):
     """
