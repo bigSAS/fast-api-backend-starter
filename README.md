@@ -81,6 +81,12 @@ source ./venv/bin/activate
 
 * dodac permission IsGroupMember i w JWT update aby zwracalo id grup do ktorych nalezy
 
+* refresh JWT
+
+* secrety do enva / konfiga
+
+* sql logging only local dev
+
 * gitlab yml / travis ? / jenkins ?
 
 * readme

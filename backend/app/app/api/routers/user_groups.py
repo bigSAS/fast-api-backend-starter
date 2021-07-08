@@ -137,7 +137,7 @@ async def list_group_users(
     )
 
 
-@router.get("/user-groups/my", tags=['admin'],  # todo: new scope - logged in user instead of admin
+@router.get("/user-groups/me", tags=['admin'],  # todo: new scope - logged in user instead of admin
             response_model=GroupUsersPaginated,
             responses=res.AUTHENTICATED | res.PROTECTED,
             dependencies=[
