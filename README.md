@@ -27,6 +27,7 @@ Create migration:
 
 ```bash
 docker-compose exec app alembic revision --autogenerate -m "{message}"
+docker-compose exec app alembic upgrade head
 ```
 
 ### Tests
@@ -74,10 +75,19 @@ source ./venv/bin/activate
 
 ## todosy
 
+* dodac skrypt/komende z cli aby utworzy default admin usera admin:admin
 
-* basic expandable perrmission model
+* pobadac endpointy ktore moga rzucac not found z repository i lapac jakos spoko err i konwertowac na api statusy 400 / 404 ect.
 
-* dodac gitlab yml
+* dodac permission IsGroupMember i w JWT update aby zwracalo id grup do ktorych nalezy
+
+* refresh JWT
+
+* secrety do enva / konfiga
+
+* sql logging only local dev
+
+* gitlab yml / travis ? / jenkins ?
 
 * readme
 
