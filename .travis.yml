@@ -10,5 +10,5 @@ script:
   - docker-compose exec app alembic upgrade head
   - docker-compose exec app python app/scripts/init_admin.py
   - docker-compose exec app pytest
-  - docker login $DOCKER_USERNAME $DOCKER_PASSWORD
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker-compose push app
