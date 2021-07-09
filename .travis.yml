@@ -1,0 +1,11 @@
+git:
+  quiet: true
+
+services:
+  - docker
+
+script:
+  - docker-compose build
+  - docker-compose up -d
+  - docker-compose exec app alembic upgrade head
+  - docker-compose exec app pytest
