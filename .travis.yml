@@ -2,22 +2,21 @@ git:
   quiet: true
 language: c
 services:
-  - docker
-
+- docker
 env:
-  - DOCKER_USER=$DOCKER_USERNAME
-  - DOCKER_PASS=$DOCKER_PASSWORD
-
+  global:
+  - secure: rqEWT8vTLNSviSoL0ut/04485LjYTmrOm4jOqOraB4F1qtHJ64NvfEEAyFA7RpbQ+75pNZgCQZH67NHyYH0Y5R1p6rMYpvfuU59zDOX2M9SRnUdldVnVbwjVzkHlK4+ex+8xgTUquCsZVqhTw5TTxTXkxIoaYSG7s/GBO/fwOYwtnrJegXRGxCRpLOb3/5ecuqiAWZzQdV9jI5lomkQMY+k4tuUb5f9bIj2ZGNJ4BOCqveDn/1IIU+z0wtccd4VkROfv13wJ3TZg/DJ4jQ675eshsFaMRgI+X+0AkiloP/2b0VU2ehuZgCK6cGiZrZ1uf30tekLCbNtMvOJoqDXXo4a/HMfx43L/MDRuLzmcLUGUURIKS7s2JKhHPIHqu1dOf/Cdws5dYIc4EIXEtwl4mu7nDnEwP4rEKp44jsNmHEJOTAO/RS1It7iqzuccW7xdxRWCUU0YQ4ZAnkk4gtHaHnQ/Orazf1BLz9LGN0U9xtgpwBlzMSh5jNYhJ4T/abv02QPFV6d1bjVb5pUl85FXjTjiTZXGsHplQeTEOnfEm99UQIzMLjoT97aCJeOnYrX97jP33dct+b81xBNjMf2jM7DBYan/ImOqUf54wsjsNvQ4A5fsQFxLcgiLl2Kpd35BOM3lgzHWpKDaaTDVkfHwtDt3V7tTYztOhj7ul0BiyYU=
+  - secure: aJcISIsLDB39DRPar/pRaXzf9u+33PRdpoUcsOPELl863aK5Q4x9UdTrNp4jP06QOr0k2SHFmEq8M0yt9VyCRmLdbpMEWs9ijmVnJGYJWJzHxmcmU5OrsgdlENXA6oWc7StUzEEgkI+Wl5H/co5J0xyU9wDW0zfXZ3Hdf87LO8kCsbxheJNYxYT1HOc1EMjnINXgKDfv0c2PvqYhPwxL8pN51aaGaxWLJejLsCIwRwKEhfOMGZMPSX1+8QvJUccWKstDfT57HQ0xVmvVHp13Cgenwr8B6C9PNZOR8uYmNYd4qyjvZnEyS7+I2Vqi4Vv4c9Kfp+ALqNx+XJyoAjtK7zK5JdZUfSq7G1q/LffQ4Yx5AiXZLc2Ch3OR+ZJc0tjxHJHMT2JzHneWGjNo+1unNDWbevzGTCa+pdz9IIXze7C5h/yFOVOTdlqMafXWChDFsSFEztaBybIvEtMVz7wqp2PTLLUHDS/fnde8/GnAfLIjv4FywVsh05sUeGUZVe28ZG2DahS58JPb19irbul7PKWXs0A0gcDRnFg9ONDdJVDU+V/vThwiGYssDx+nkvu2UquWJxorqb8lTDumphDZ0lY3CNa3iPdWycBp37WGBfHAeeBsQivjLGqpwu8tXoQUan/fY7VYpbbjk181JzJwRKL9B0Z4p6Wd8LsBWvL1EBs=
 jobs:
   include:
-    - stage: build-with-tests
-      script:
-        - docker-compose build
-        - docker-compose up -d
-        - docker-compose exec app alembic upgrade head
-        - docker-compose exec app python app/scripts/init_admin.py
-        - docker-compose exec app pytest
-        - echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-        - docker-compose push app
+  - stage: build-with-tests
+    script:
+    - docker-compose build
+    - docker-compose up -d
+    - docker-compose exec app alembic upgrade head
+    - docker-compose exec app python app/scripts/init_admin.py
+    - docker-compose exec app pytest
+    - echo $DOCKER_TOKEN | docker login -u $DOCKER_USER --password-stdin
+    - docker-compose push app
 stages:
-  - build-with-tests
+- build-with-tests
