@@ -10,21 +10,14 @@ env:
 
 jobs:
   include:
-    - stage: build
+    - stage: build-with-tests
       script:
         - docker-compose build
-    - stage: test
-      script:
         - docker-compose up -d
         - docker-compose exec app alembic upgrade head
         - docker-compose exec app python app/scripts/init_admin.py
         - docker-compose exec app pytest
-    - stage: publish
-      script:
         - echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
         - docker-compose push app
-
 stages:
-  - build
-  - test
-  - publish
+  - build-with-tests
