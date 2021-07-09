@@ -3,6 +3,7 @@ services:
   app:
     build:
       context: ./backend/app
+    image: bigsas/fast-api-starter:${TRAVIS_TAG:-latest}
     volumes:
       - ./backend/app:/app
     ports:

@@ -10,3 +10,4 @@ script:
   - docker-compose exec app alembic upgrade head
   - docker-compose exec app python app/scripts/init_admin.py
   - docker-compose exec app pytest
+  - docker-compose push app
