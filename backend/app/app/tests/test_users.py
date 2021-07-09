@@ -1,7 +1,7 @@
 from app.tests.setup import client
 
 
-def test_jwt(username: str = "jimmy", password: str = "jimmy"):
+def test_jwt(username: str = "admin", password: str = "admin"):
     response = client.post(
         "/token",
         headers={"Content-Type": "application/x-www-form-urlencoded"},
