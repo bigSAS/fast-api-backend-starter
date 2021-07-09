@@ -1,6 +1,6 @@
 git:
   quiet: true
-language: c
+language: bash
 services:
 - docker
 jobs:

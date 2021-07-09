@@ -1,5 +1,5 @@
-# Fast API backend starter
-# TODO: user creation validation 4 username & email, remove items
+# Fast API backend starter [![Build Status](https://travis-ci.com/bigSAS/fast-api-backend-starter.svg?branch=main)](https://travis-ci.com/bigSAS/fast-api-backend-starter)
+
 ## Usage
 
 ### With docker-compose
