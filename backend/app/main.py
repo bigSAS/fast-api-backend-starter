@@ -1,15 +1,11 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from sqlalchemy import event
 
-from app.api.auth import auth
-from app.api.dependencies import get_db
 from app.api.routers import users
 from app.api.routers import permissions
 from app.api.routers import notes
 from app.api.routers import user_groups
 from app.config import settings
-from app.database.models.user import User as UserEntity
 from app.errors.api import ApiError, UnknownApiError
 
 tags_metadata = [
@@ -72,14 +68,3 @@ def handle_unknown_api_error(request, exception: Exception):
         status_code=error.status_code,
         content={'message': error.error_message.message}
     )
-
-
-@event.listens_for(UserEntity.__table__, 'after_create')
-def insert_initial_values(*args, **kwargs):
-    db = get_db()
-    db.session.add(UserEntity(
-        username='admin',
-        email='admin',
-        hashed_password=auth.get_password_hash('admin')
-    ))
-    db.session.commit()
