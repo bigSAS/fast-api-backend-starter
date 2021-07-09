@@ -1,6 +1,6 @@
 git:
   quiet: true
-language: python
+language: c
 services:
   - docker
 
