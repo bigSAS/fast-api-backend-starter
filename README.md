@@ -1,4 +1,6 @@
-# Fast API backend starter [![Build Status](https://travis-ci.com/bigSAS/fast-api-backend-starter.svg?branch=main)](https://travis-ci.com/bigSAS/fast-api-backend-starter)
+moved to GitLab https://gitlab.com/bigSAS/fast-api-backend-starter/
+
+## Fast API backend starter [![Build Status](https://travis-ci.com/bigSAS/fast-api-backend-starter.svg?branch=main)](https://travis-ci.com/bigSAS/fast-api-backend-starter)
 
 ## Usage
 
